@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:defusion="http://www.defusion.org.uk/mxml" 
+	creationComplete="creationCompleteHandler()" 
+	width="100%" height="100%"
+>
+
+	<mx:Script>
+		<![CDATA[
+			import tests.RIFFParserTest;
+			import tests.WAVDecoderTest;
+			import tests.OggVorbisDecoderTest;
+			import flexunit.framework.TestSuite;
+			
+			[Bindable]
+			public var suite:TestSuite;
+			
+			public function creationCompleteHandler():void {
+				suite = new TestSuite();
+				suite.addTest(RIFFParserTest.getSuite());
+				suite.addTest(WAVDecoderTest.getSuite());
+				suite.addTest(OggVorbisDecoderTest.getSuite());
+				testRunner.startTest();
+			}
+		]]>
+	</mx:Script>
+		<defusion:FlexUnitRunner id="testRunner" width="100%" height="100%" test="{suite}" />
+
+</mx:Application>

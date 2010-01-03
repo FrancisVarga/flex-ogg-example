@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="creationCompleteHandler()" >
+	<mx:Script>
+		<![CDATA[
+			import com.automatastudios.audio.audiodecoder.AudioDecoder;
+			import com.automatastudios.audio.audiodecoder.decoders.WAVDecoder;
+			import com.automatastudios.audio.audiodecoder.decoders.OggVorbisDecoder;
+			import mx.controls.Alert;
+			import flash.events.MouseEvent;
+			
+			private var _sound:Sound;
+			private var _urlStream:URLStream;
+			private var _decoder:AudioDecoder;
+			private var _channel:SoundChannel;
+			
+			public function creationCompleteHandler():void {
+				_sound = new Sound();
+				
+				_urlStream = new URLStream();
+				
+				_decoder = new AudioDecoder();
+				_decoder.load(_urlStream, WAVDecoder, 8000);
+				_decoder.addEventListener(Event.INIT, onDecoderReady);
+				_decoder.addEventListener(Event.COMPLETE, onSoundComplete);
+				_decoder.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
+				
+			//	_urlStream.load(new URLRequest("http://www.vorbis.com/music/Hydrate-Kenny_Beltrey.ogg"));
+				_urlStream.load(new URLRequest("../assets/stereo_16bit_44khz.wav"));
+				
+				addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			}
+			
+			private function onAddedToStage(event:Event):void {
+				stage.addEventListener(MouseEvent.CLICK, onClick);
+			}
+			
+			private function onClick(MouseEvent:Event):void {
+				_channel.stop();
+			}
+			
+			
+			private function onDecoderReady(event:Event):void {
+				trace(_decoder.audioInfo.toString());
+				_decoder.play();
+			}
+			
+			private function onIOError(event:IOErrorEvent):void {
+				trace("IO ERROR: " + event.text);
+			}
+			
+			private function onSoundComplete(event:Event):void {
+				trace("END SOUND");
+			}
+			
+		]]>
+	</mx:Script>	
+</mx:Application>

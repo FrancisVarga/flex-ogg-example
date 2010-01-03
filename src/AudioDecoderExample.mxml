@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+				width="100%"
+				height="100%"
+				horizontalAlign="center"
+				verticalAlign="top"
+				verticalGap="20"
+				 creationComplete="init()">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.automatastudios.audio.audiodecoder.AudioDecoder;
+			import com.automatastudios.audio.audiodecoder.decoders.*;
+			
+			import flash.events.Event;
+			import flash.events.IOErrorEvent;
+			import flash.net.URLStream;
+			import flash.net.URLRequest;
+			
+			private const BUFFER_SIZE:uint = 8192;
+			
+			public var decoder:AudioDecoder;
+			public var stream:URLStream;
+			public var channel:SoundChannel;		
+
+			public function init():void {
+				decoder = new AudioDecoder();
+				decoder.addEventListener(Event.INIT, onDecoderInit);
+				decoder.addEventListener(Event.COMPLETE, onDecoderComplete);
+				decoder.addEventListener(IOErrorEvent.IO_ERROR, onDecoderIOError);
+			}
+			
+			public function playSound(fileName:String, decoderClass:Class):void {
+				if (stream != null) {
+					stream.close();
+					channel.stop();
+				}
+				
+				taInfo.text = ":: Loading: " + fileName + "\n";
+	
+				stream = new URLStream();		
+				decoder.load(stream, decoderClass, BUFFER_SIZE);
+				stream.load(new URLRequest(fileName));
+			}
+			
+			private function onDecoderInit(event:Event):void {
+				channel = decoder.play();
+				taInfo.text += decoder.audioInfo.toString();
+			}
+			
+			private function onDecoderComplete(event:Event):void {
+				taInfo.text += ":: Sound completed!";	
+			}
+			
+			private function onDecoderIOError(event:IOErrorEvent):void {
+				taInfo.text = ":: Error: " + event.text;
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:HBox width="100%">
+		<mx:Panel width="100%" title="WAV" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+			<mx:HBox width="100%" horizontalAlign="center" horizontalGap="10">
+				<mx:Button width="135" label="8bit 11khz mono" click="playSound('../assets/mono_8bit_11khz.wav', WAVDecoder);"/>
+				<mx:Button width="135" label="8bit 22khz mono" click="playSound('../assets/mono_8bit_22khz.wav', WAVDecoder);"/>
+				<mx:Button width="135" label="8bit 44khz mono" click="playSound('../assets/mono_8bit_44khz.wav', WAVDecoder);"/>
+			</mx:HBox>
+
+			<mx:HBox width="100%" horizontalAlign="center" horizontalGap="10">
+				<mx:Button width="135" label="8bit 11khz stereo" click="playSound('../assets/stereo_8bit_11khz.wav', WAVDecoder);"/>
+				<mx:Button width="135" label="8bit 22khz stereo" click="playSound('../assets/stereo_8bit_22khz.wav', WAVDecoder);"/>
+				<mx:Button width="135" label="8bit 44khz stereo" click="playSound('../assets/stereo_8bit_44khz.wav', WAVDecoder);"/>
+			</mx:HBox>
+			<mx:HBox width="100%" horizontalAlign="center" horizontalGap="10">
+				<mx:Button width="135" label="16bit 11khz mono" click="playSound('../assets/mono_16bit_11khz.wav', WAVDecoder);"/>
+				<mx:Button width="135" label="16bit 22khz mono" click="playSound('../assets/mono_16bit_22khz.wav', WAVDecoder);"/>
+				<mx:Button width="135" label="16bit 44khz mono" click="playSound('../assets/mono_16bit_44khz.wav', WAVDecoder);"/>
+			</mx:HBox>
+			<mx:HBox width="100%" horizontalAlign="center" horizontalGap="10">
+				<mx:Button width="135" label="16bit 11khz stereo" click="playSound('../assets/stereo_16bit_11khz.wav', WAVDecoder);"/>
+				<mx:Button width="135" label="16bit 22khz stereo" click="playSound('../assets/stereo_16bit_22khz.wav', WAVDecoder);"/>
+				<mx:Button width="135" label="16bit 44khz stereo" click="playSound('../assets/stereo_16bit_44khz.wav', WAVDecoder);"/>
+			</mx:HBox>
+		</mx:Panel>
+		
+		<mx:Panel width="100%" title="Ogg Vorbis" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+			<mx:HBox width="100%" horizontalAlign="center" horizontalGap="10">
+				<mx:Button width="205" label="11khz mono" click="playSound('../assets/mono_11khz.ogg', OggVorbisDecoder);"/>
+				<mx:Button width="205" label="11khz stereo" click="playSound('../assets/stereo_11khz.ogg', OggVorbisDecoder);"/>
+			</mx:HBox>
+			<mx:HBox width="100%" horizontalAlign="center" horizontalGap="10">
+				<mx:Button width="205" label="22khz mono" click="playSound('../assets/mono_22khz.ogg', OggVorbisDecoder);"/>
+				<mx:Button width="205" label="22khz stereo" click="playSound('../assets/stereo_22khz.ogg', OggVorbisDecoder);"/>
+			</mx:HBox>
+			<mx:HBox width="100%" horizontalAlign="center" horizontalGap="10">
+				<mx:Button width="205" label="44khz mono" click="playSound('../assets/mono_44khz.ogg', OggVorbisDecoder);"/>
+				<mx:Button width="205" label="44khz stereo" click="playSound('../assets/stereo_44khz.ogg', OggVorbisDecoder);"/>
+			</mx:HBox>
+			<mx:HBox width="100%" horizontalAlign="center" horizontalGap="10">
+				<mx:Button width="420" label="Hydrate - Kenny Beltrey" click="playSound('../assets/Hydrate-Kenny_Beltrey.ogg', OggVorbisDecoder);"/>
+			</mx:HBox>
+		</mx:Panel>
+	</mx:HBox>
+	
+	<mx:Panel width="100%" title="File Information">
+		<mx:TextArea id="taInfo" width="100%" height="200" />
+	</mx:Panel>
+	
+	
+</mx:Application>
